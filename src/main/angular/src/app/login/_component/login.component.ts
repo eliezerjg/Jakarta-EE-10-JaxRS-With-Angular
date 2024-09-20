@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { FormsModule } from "@angular/forms";
+import {Component} from '@angular/core';
+import {FormsModule} from "@angular/forms";
+import {LoginService} from "../_service/login.service";
 
 @Component({
   selector: 'app-login',
@@ -11,32 +12,17 @@ import { FormsModule } from "@angular/forms";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  username: string = '';
+  loginService = new LoginService();
+
+  email: string = '';
   password: string = '';
 
   async onSubmit() {
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: this.username,
-          password: this.password
-        })
-      });
+    const response = await this.loginService.doLogin(this.email, this.password);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-
+    response.text().then((result) => {
       alert(result);
+    });
 
-    } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-    }
   }
 }
